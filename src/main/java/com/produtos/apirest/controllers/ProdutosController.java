@@ -30,15 +30,18 @@ public class ProdutosController {
 
 	@Autowired
 	ProdutoRepository produtoRepo;
+	
+	@GetMapping(value = "/produtos")
+	@ApiOperation(value = "Retorna a lista de todas pizzas cadastradas")
+	public ResponseEntity<List<Produtos>> listaPizzas(){
+		List<Produtos> findAll = produtoRepo.findAll();
+		return ResponseEntity.ok(findAll);
+	}
 
 	@GetMapping(value = "/produtos{id}")
-	@ApiOperation(value = "Retorna uma lista de produtos, se for passado uma id retorna um produto específico")
-	public ResponseEntity<List<Produtos>> produtoUnico(@PathVariable(name = "id", required = false) Long id)
+	@ApiOperation(value = "Se for passado uma id retorna um produto específico")
+	public ResponseEntity<List<Produtos>> produtoUnico(@PathVariable(name = "id", required = true) Long id)
 			throws Exception {
-		if (id == null) {
-			List<Produtos> findAll = produtoRepo.findAll();
-			return ResponseEntity.ok(findAll);
-		} else {
 			Optional<Produtos> produto = produtoRepo.findById(id);
 			if (produto.isPresent()) {
 				Produtos produtos = produto.get();
@@ -48,7 +51,6 @@ public class ProdutosController {
 			} else {
 				return ResponseEntity.notFound().build();
 			}
-		}
 	}
 
 	@GetMapping(value = "/busca{nome}")
@@ -59,7 +61,7 @@ public class ProdutosController {
 	}
 
 	@PostMapping(value = "/produtos")
-	@ApiOperation(value = "Cadastra uma Pizza")
+	@ApiOperation(value = "Cadastra uma Pizza, não passe um id ele é gerado automático")
 	public Produtos gravaProduto(@RequestBody Produtos produto) {
 		return produtoRepo.save(produto);
 	}
