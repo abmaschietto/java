@@ -8,6 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
+
 
 @Entity
 @Table(name = "tb_produto")
@@ -20,8 +26,11 @@ public class Produtos implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	@NotNull(message = "O campo nome não pode estar nulo") @NotEmpty(message = "O campo não pode estar vazio") @Length(min = 6, max = 30) 
 	private String nome;
+	@NotNull(message = "O campo não pode estar nulo")
 	private BigDecimal quantidade;
+	@NotNull(message = "O campo não pode estar nulo")
 	private BigDecimal valor;
 	
 	

@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,8 +42,9 @@ public class ProdutosController {
 		return ResponseEntity.ok(findAll);
 	}
 
-	@GetMapping(value = "/produtos{id}")
+	@GetMapping(value = "/produtos/{id}")
 	@ApiOperation(value = "Se for passado uma id retorna um produto específico")
+	@Cacheable(value = "Busca por id")
 	public ResponseEntity<List<Produtos>> produtoUnico(@PathVariable(name = "id", required = true) Long id)
 			throws Exception {
 			Optional<Produtos> produto = produtoRepo.findById(id);
@@ -53,8 +58,9 @@ public class ProdutosController {
 			}
 	}
 
-	@GetMapping(value = "/busca{nome}")
+	@GetMapping(value = "/busca/{nome}")
 	@ApiOperation(value = "Retorna uma pizza por nome")
+	@Cacheable(value = "Busca por nome")
 	public ResponseEntity<Produtos> produtoUnicoNome(@PathVariable(name = "nome", required = true) String nome) {
 		Produtos produto = produtoRepo.findByNome(nome);
 		return ResponseEntity.ok(produto);
@@ -62,12 +68,13 @@ public class ProdutosController {
 
 	@PostMapping(value = "/produtos")
 	@ApiOperation(value = "Cadastra uma Pizza, não passe um id ele é gerado automático")
-	public Produtos gravaProduto(@RequestBody Produtos produto) {
+	public Produtos gravaProduto(@RequestBody @Valid Produtos produto) {
 		return produtoRepo.save(produto);
 	}
 
 	@DeleteMapping(value = "/produtos/{id}")
 	@ApiOperation(value = "Deleta uma Pizza passando o id desejado a ser deletado")
+	@CacheEvict(value = {"Busca por nome", "Busca por id"}, allEntries = true)
 	public ResponseEntity<List<Produtos>> deletar(@PathVariable(name = "id", required = true) Long id) {
 		Optional<Produtos> mocap = produtoRepo.findById(id);
 		if (mocap.isPresent()) {
@@ -80,6 +87,7 @@ public class ProdutosController {
 
 	@PutMapping(value = "/produtos")
 	@ApiOperation(value = "Atualiza uma pizza")
+	@CacheEvict(value = {"Busca por nome", "Busca por id"}, allEntries = true)
 	public ResponseEntity<Produtos> atualiza(@RequestBody Produtos produto) {
 		Optional<Produtos> findById = produtoRepo.findById(produto.getId());
 		if (findById.isPresent()) {
