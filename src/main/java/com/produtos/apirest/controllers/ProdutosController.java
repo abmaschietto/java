@@ -88,7 +88,7 @@ public class ProdutosController {
 	@PutMapping(value = "/produtos")
 	@ApiOperation(value = "Atualiza uma pizza")
 	@CacheEvict(value = {"Busca por nome", "Busca por id"}, allEntries = true)
-	public ResponseEntity<Produtos> atualiza(@RequestBody Produtos produto) {
+	public ResponseEntity<Produtos> atualiza(@RequestBody @Valid Produtos produto) {
 		Optional<Produtos> findById = produtoRepo.findById(produto.getId());
 		if (findById.isPresent()) {
 			Produtos save = produtoRepo.save(produto);
