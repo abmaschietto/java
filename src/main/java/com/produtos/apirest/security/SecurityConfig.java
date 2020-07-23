@@ -43,12 +43,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
+		http.csrf().disable() 
 		.authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/api/hello").permitAll()
 		.antMatchers(HttpMethod.POST, "/auth/user").permitAll()
 		.antMatchers(HttpMethod.POST, "/auth/login").permitAll()
 		.anyRequest().authenticated()
+		.and()
+		.cors() // habilita cross origin
 		.and()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and()
