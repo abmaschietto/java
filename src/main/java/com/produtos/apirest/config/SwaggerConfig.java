@@ -1,12 +1,17 @@
 package com.produtos.apirest.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Predicate;
+import com.produtos.apirest.models.Usuario;
 
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -23,7 +28,17 @@ public class SwaggerConfig {
 				.apis(RequestHandlerSelectors.basePackage("com.produtos.apirest"))
 				.paths(PathSelectors.ant("/**"))
 				.build()
-				.apiInfo(metaInfo());
+				.ignoredParameterTypes(Usuario.class)
+				.apiInfo(metaInfo())
+				.globalOperationParameters(Arrays.asList( //código para adicionar parâmetro no swagger
+						new ParameterBuilder()
+						.name("Authorization")
+						.description("Header para o token JWT")
+						.modelRef(new ModelRef("string"))
+						.parameterType("header")
+						.required(false)
+						.build()
+						));
 	}
 	
 	private ApiInfo metaInfo() {

@@ -35,6 +35,11 @@ public class ProdutosController {
 	@Autowired
 	ProdutoRepository produtoRepo;
 	
+	@GetMapping(value = "/hello")
+	public String hello() {
+		return "Olá teste";
+	}
+	
 	@GetMapping(value = "/produtos")
 	@ApiOperation(value = "Retorna a lista de todas pizzas cadastradas")
 	public ResponseEntity<List<Produtos>> listaPizzas(){
